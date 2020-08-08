@@ -1,0 +1,4 @@
+name: "svhn"
+path:
+  train: "dataset/svhn"
+  test: "dataset/svhn"
