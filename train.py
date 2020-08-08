@@ -1,7 +1,8 @@
+from argparse import ArgumentParser
+
+import omegaconf
 import pytorch_lightning
 import torch
-from argparse import ArgumentParser
-import omegaconf
 import torchvision
 
 
