@@ -1,9 +1,10 @@
+import dataclasses
+from argparse import ArgumentParser, Namespace
+from pathlib import Path
+
 import torch
 import torchvision
-from pathlib import Path
-from argparse import ArgumentParser, Namespace
-from omegaconf import OmegaConf, DictConfig
-import dataclasses
+from omegaconf import DictConfig, OmegaConf
 
 
 def get_config(args: Namespace) -> DictConfig:
