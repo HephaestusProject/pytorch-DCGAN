@@ -1,5 +1,6 @@
-import torch.nn as nn
 import numpy as np
+import torch.nn as nn
+
 from src.model.ops import *
 
 
@@ -24,7 +25,11 @@ class Generator(nn.Module):
             ),
             # conv3: [128, 256, 16, 16]
             self._conv_transpose(
-                self.hparams.num_gen_filters * 4, self.hparams.num_channels, 4, 2, 1,
+                self.hparams.num_gen_filters * 4,
+                self.hparams.num_channels,
+                4,
+                2,
+                1,
             ),  # [128, 3, 32, 32] # tahn으로 바꿔야함
         )
 

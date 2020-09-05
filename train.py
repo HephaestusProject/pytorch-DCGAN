@@ -2,16 +2,14 @@ import dataclasses
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
-import torch
-from torch.utils.data import DataLoader
-from pathlib import Path
-from argparse import ArgumentParser, Namespace
-from omegaconf import OmegaConf, DictConfig
-import dataclasses
-from src.dataset import SVHN
-from src.model.net import Generator, Discriminator
-from src.runner import Runner
 import pytorch_lightning as pl
+import torch
+from omegaconf import DictConfig, OmegaConf
+from torch.utils.data import DataLoader
+
+from src.dataset import SVHN
+from src.model.net import Discriminator, Generator
+from src.runner import Runner
 
 
 def get_config(args: Namespace) -> DictConfig:
