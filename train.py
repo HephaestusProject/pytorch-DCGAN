@@ -1,9 +1,13 @@
 import torch
-import torchvision
+from torch.utils.data import DataLoader
 from pathlib import Path
 from argparse import ArgumentParser, Namespace
 from omegaconf import OmegaConf, DictConfig
 import dataclasses
+from src.dataset import SVHN
+from src.model.net import Generator, Discriminator
+from src.runner import Runner
+import pytorch_lightning as pl
 
 
 def get_config(args: Namespace) -> DictConfig:
@@ -17,33 +21,22 @@ def get_config(args: Namespace) -> DictConfig:
     )
 
 
-def get_dataset(dataset: str):
-    if dataset.name == "svhn":
-        return torchvision.datasets.SVHN(
-            dataset.path.train, split="train", download=True
-        )
+def get_dataloader(conf: str) -> (DataLoader, DataLoader):
+    if conf.dataset.name == "svhn":
+        svhn = SVHN(conf)
+        return svhn.train_dataloader(), svhn.val_dataloader()
     else:
-        raise Exception("Invalid dataset name: {}".format(dataset.name))
+        raise Exception("Invalid dataset name: {}".format(conf.dataset.name))
 
 
 def run(conf: DictConfig) -> None:
-    dataset = get_dataset(conf.dataset)
-    validation_length = 10000
-    validation_dataset, train_dataset = torch.utils.data.random_split(
-        dataset,
-        [validation_length, dataset.__len__() - validation_length],
-        generator=torch.Generator().manual_seed(42),
-    )
-    validation_data_loader = torch.utils.data.DataLoader(
-        dataset=validation_dataset,
-        batch_size=conf.model.params.batch_size,
-        shuffle=True,
-    )
-    train_data_loader = torch.utils.data.DataLoader(
-        dataset=train_dataset, batch_size=conf.model.params.batch_size, shuffle=True,
-    )
-
-    print(validation_dataset.__len__())
+    train_dataloader, val_dataloader = get_dataloader(conf)
+    model_G = Generator(hparams=conf.model.params)
+    model_D = Discriminator(hparams=conf.model.params)
+    runner = Runner(conf.model.params, model_G, model_D)
+    trainer = pl.Trainer()
+    trainer.fit(runner, train_dataloader=train_dataloader)
+    # , val_dataloaders=val_dataloader
 
 
 if __name__ == "__main__":
