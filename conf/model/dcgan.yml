@@ -1,3 +1,7 @@
 name: dcgan
 params:
   batch_size: 128
+  num_channels: 3
+  size_of_latent_vector: 100
+  num_gen_filters: 64
+  lr: 0.01
