@@ -1,7 +1,7 @@
 import torch
 import torchvision
-from torch.utils.data import random_split, DataLoader
 import torchvision.transforms as transforms
+from torch.utils.data import DataLoader, random_split
 
 
 class SVHN:
