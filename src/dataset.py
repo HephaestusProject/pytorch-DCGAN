@@ -1,8 +1,9 @@
+from typing import List
+
 import torch
 import torchvision
-from torch.utils.data import random_split, DataLoader, Dataset
 import torchvision.transforms as transforms
-from typing import List
+from torch.utils.data import DataLoader, Dataset, random_split
 
 
 class SVHN:

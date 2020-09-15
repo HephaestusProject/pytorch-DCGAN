@@ -5,12 +5,12 @@ from pathlib import Path
 import pytorch_lightning as pl
 import torch
 from omegaconf import DictConfig, OmegaConf
+from pytorch_lightning.loggers import WandbLogger
 from torch.utils.data import DataLoader
 
 from src.dataset import SVHN
 from src.model.net import Discriminator, Generator
 from src.runner import Runner
-from pytorch_lightning.loggers import WandbLogger
 
 wandb_logger = WandbLogger(
     name="Adam-32-0.001", project="hephaestusproject-pytorch-dcgan", log_model=True

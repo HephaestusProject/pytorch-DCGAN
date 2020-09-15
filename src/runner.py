@@ -4,7 +4,6 @@ import pytorch_lightning as pl
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from collections import OrderedDict
 import wandb
 from typing import List
 
