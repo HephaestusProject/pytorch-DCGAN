@@ -20,7 +20,7 @@ class SVHN:
             transform=transforms.ToTensor(),
         )
 
-    def split_dataset(self) -> List[Dataset, Dataset]:
+    def split_dataset(self) -> [Dataset, Dataset]:
         # split by fixed validation size
         return random_split(
             self.dataset,
