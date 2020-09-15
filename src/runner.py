@@ -6,6 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from collections import OrderedDict
 import wandb
+from typing import List
 
 
 class Runner(pl.LightningModule):
@@ -15,7 +16,7 @@ class Runner(pl.LightningModule):
         self.generator = generator
         self.discriminator = discriminator
 
-    def configure_optimizers(self):
+    def configure_optimizers(self) -> (List, List):
         lr = self.hparams.lr
 
         g_optimizer = torch.optim.Adam(self.generator.parameters(), lr=lr)
