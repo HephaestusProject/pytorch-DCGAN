@@ -10,6 +10,11 @@ from torch.utils.data import DataLoader
 from src.dataset import SVHN
 from src.model.net import Discriminator, Generator
 from src.runner import Runner
+from pytorch_lightning.loggers import WandbLogger
+
+wandb_logger = WandbLogger(
+    name="Adam-32-0.001", project="hephaestusproject-pytorch-dcgan", log_model=True
+)
 
 
 def get_config(args: Namespace) -> DictConfig:
@@ -36,8 +41,10 @@ def run(conf: DictConfig) -> None:
     model_G = Generator(hparams=conf.model.params)
     model_D = Discriminator(hparams=conf.model.params)
     runner = Runner(conf.model.params, model_G, model_D)
-    trainer = pl.Trainer()
+    trainer = pl.Trainer(logger=wandb_logger)
     trainer.fit(runner, train_dataloader=train_dataloader)
+    # trainer.save_checkpoint("DCGANADam-32-0.001.pth")
+    # wandb.save("DCGANADam-32-0.001.pth")
     # , val_dataloaders=val_dataloader
 
 

@@ -1,4 +1,6 @@
 pytorch-lightning==0.8.5
-omegaconf
-scipy
+omegaconf==2.0.1
 tensorboard==1.15
+sklearn
+wandb
+scipy

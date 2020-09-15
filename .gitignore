@@ -116,6 +116,9 @@ venv.bak/
 events.out.tfevents.*
 
 # additional
-ignore
+ignore/*
 .DS_Store
 dataset/
+*.pth
+wandb
+checkpoints

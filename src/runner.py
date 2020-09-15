@@ -3,10 +3,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from collections import OrderedDict
+import wandb
 
 
 class Runner(pl.LightningModule):
-    def __init__(self, hparams, generator, discriminator):
+    def __init__(self, hparams: dict, generator, discriminator):
         super(Runner, self).__init__()
         self.hparams = hparams
         self.generator = generator
@@ -19,19 +20,19 @@ class Runner(pl.LightningModule):
         d_optimizer = torch.optim.Adam(self.discriminator.parameters(), lr=lr)
         return [g_optimizer, d_optimizer], []  # optimizer list 전달
 
-    def forward(self, z):
+    def forward(self, z: torch.Tensor) -> torch.Tensor:
         return self.generator(z)
 
-    def adversarial_loss(self, y_hat, y):
+    def adversarial_loss(self, y_hat: torch.Tensor, y: torch.Tensor):
         return F.binary_cross_entropy(y_hat, y)
 
     def training_step(self, batch, batch_idx, optimizer_idx):
-        real_images, _ = batch
+        real_images, labels = batch
 
         # optimizer index에 따른 구현
         # generator
         if optimizer_idx == 0:
-            z = torch.randn(self.hparams.batch_size, self.hparams.size_of_latent_vector)
+            z = torch.randn(real_images.size(0), self.hparams.size_of_latent_vector)
 
             self.fake_images = self.forward(z)
             valid = torch.ones(real_images.size(0), 1)
@@ -41,6 +42,8 @@ class Runner(pl.LightningModule):
             output = OrderedDict(
                 {"loss": g_loss, "progress_bar": tqdm_dict, "log": tqdm_dict}
             )
+            wandb.log({"images": [wandb.Image(self.fake_images[0], caption="fake")]})
+
             return output
 
         # discriminator
