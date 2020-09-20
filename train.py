@@ -55,4 +55,3 @@ if __name__ == "__main__":
     parser.add_argument("--gpus", default=None, type=int)
     args = parser.parse_args()
     run(get_config(args))
-
