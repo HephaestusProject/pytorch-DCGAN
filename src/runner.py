@@ -1,11 +1,11 @@
 from collections import OrderedDict
+from typing import List
 
 import pytorch_lightning as pl
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import wandb
-from typing import List
 
 
 class Runner(pl.LightningModule):
