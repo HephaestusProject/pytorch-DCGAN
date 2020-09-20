@@ -41,10 +41,10 @@ def run(conf: DictConfig) -> None:
     model_G = Generator(hparams=conf.model.params)
     model_D = Discriminator(hparams=conf.model.params)
     runner = Runner(conf.model.params, model_G, model_D)
-    trainer = pl.Trainer(logger=wandb_logger)
+    trainer = pl.Trainer(logger=wandb_logger, gpus=conf.gpus)
     trainer.fit(runner, train_dataloader=train_dataloader)
     # trainer.save_checkpoint("DCGANADam-32-0.001.pth")
-    # wandb.save("DCGANADam-32-0.001.pth")
+    wandb.save("DCGANADam-32-ks-4.pth")
     # , val_dataloaders=val_dataloader
 
 
@@ -52,5 +52,7 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--dataset", default="svhn", type=str)
     parser.add_argument("--model", default="dcgan", type=str)
+    parser.add_argument("--gpus", default=None, type=int)
     args = parser.parse_args()
     run(get_config(args))
+

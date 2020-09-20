@@ -34,10 +34,14 @@ class Runner(pl.LightningModule):
         # optimizer index에 따른 구현
         # generator
         if optimizer_idx == 0:
-            z = torch.randn(real_images.size(0), self.hparams.size_of_latent_vector)
+            z = torch.randn(
+                real_images.size(0),
+                self.hparams.size_of_latent_vector,
+                device=self.device,
+            )
 
             self.fake_images = self.forward(z)
-            valid = torch.ones(real_images.size(0), 1)
+            valid = torch.ones(real_images.size(0), 1, device=self.device)
 
             g_loss = self.adversarial_loss(self.discriminator(self.fake_images), valid)
             tqdm_dict = {"g_loss": g_loss}
@@ -51,10 +55,10 @@ class Runner(pl.LightningModule):
         # discriminator
         if optimizer_idx == 1:
 
-            valid = torch.ones(real_images.size(0), 1)
+            valid = torch.ones(real_images.size(0), 1, device=self.device)
             real_loss = self.adversarial_loss(self.discriminator(real_images), valid)
 
-            fake = torch.zeros(real_images.size(0), 1)
+            fake = torch.zeros(real_images.size(0), 1, device=self.device)
             fake_loss = self.adversarial_loss(
                 self.discriminator(self.fake_images.detach()), fake
             )
