@@ -71,4 +71,3 @@ if __name__ == "__main__":
     parser.add_argument("--model", default="dcgan", type=str)
     args = parser.parse_args()
     run(get_config(args))
-
