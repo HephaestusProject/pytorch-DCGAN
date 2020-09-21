@@ -45,7 +45,9 @@ def run(conf: DictConfig) -> None:
     print(conf.model.params)
     exp_name = get_exp_name(conf.model.params)
     wandb_logger = WandbLogger(
-        name=exp_name, project="hephaestusproject-pytorch-dcgan", log_model=True,
+        name=exp_name,
+        project="hephaestusproject-pytorch-dcgan",
+        log_model=True,
     )
     train_dataloader, val_dataloader = get_dataloader(conf)
     model_G = Generator(hparams=conf.model.params)
@@ -57,7 +59,9 @@ def run(conf: DictConfig) -> None:
         gpus=-1 if torch.cuda.is_available() else 0,
         max_epochs=conf.model.params.max_epochs,
         callbacks=[
-            SaveCheckpointEveryNEpoch(n=2, file_path=checkpoint_path, filename_prefix=exp_name)
+            SaveCheckpointEveryNEpoch(
+                n=2, file_path=checkpoint_path, filename_prefix=exp_name
+            )
         ],
     )
     trainer.fit(

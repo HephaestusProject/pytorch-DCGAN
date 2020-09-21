@@ -36,16 +36,23 @@ class Generator(nn.Module):
             nn.BatchNorm2d(self.hparams.num_g_filters * 8),
             nn.ReLU(True),
             self._conv_transpose(
-                self.hparams.num_g_filters * 8, self.hparams.num_g_filters * 4,
+                self.hparams.num_g_filters * 8,
+                self.hparams.num_g_filters * 4,
             ),  # [128, 256, 4, 4]
             self._conv_transpose(
-                self.hparams.num_g_filters * 4, self.hparams.num_g_filters * 2,
+                self.hparams.num_g_filters * 4,
+                self.hparams.num_g_filters * 2,
             ),  # input[128, 128, 8, 8]
             self._conv_transpose(
-                self.hparams.num_g_filters * 2, self.hparams.num_g_filters * 1,
+                self.hparams.num_g_filters * 2,
+                self.hparams.num_g_filters * 1,
             ),  # input[128, 64, 16, 16]
             nn.ConvTranspose2d(
-                self.hparams.num_g_filters * 1, self.hparams.num_channels, 4, 2, 1,
+                self.hparams.num_g_filters * 1,
+                self.hparams.num_channels,
+                4,
+                2,
+                1,
             ),
             nn.Tanh(),  # [128, 3, 32, 32]
         )
@@ -55,7 +62,12 @@ class Generator(nn.Module):
     ) -> nn.Sequential:
         return nn.Sequential(
             nn.ConvTranspose2d(
-                c_in, c_out, kernel_size, stride, 1, bias=False,
+                c_in,
+                c_out,
+                kernel_size,
+                stride,
+                1,
+                bias=False,
             ),  # bias false
             nn.BatchNorm2d(c_out),
             nn.ReLU(True),
@@ -84,7 +96,11 @@ class Discriminator(nn.Module):
                 self.hparams.num_d_filters * 4, self.hparams.num_d_filters * 8
             ),  # [128, 512, 2, 2]
             Reshape(-1, self.hparams.num_d_filters * 8 * 2 * 2),
-            nn.Linear(self.hparams.num_d_filters * 8 * 2 * 2, 1, bias=False,),
+            nn.Linear(
+                self.hparams.num_d_filters * 8 * 2 * 2,
+                1,
+                bias=False,
+            ),
             nn.Sigmoid(),
         )
 

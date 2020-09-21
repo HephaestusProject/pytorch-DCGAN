@@ -88,7 +88,9 @@ class Runner(pl.LightningModule):
         real_images, _ = batch
 
         z = torch.randn(
-            real_images.size(0), self.hparams.size_of_latent_vector, device=self.device,
+            real_images.size(0),
+            self.hparams.size_of_latent_vector,
+            device=self.device,
         )
 
         self.fake_images = self.forward(z)
@@ -114,4 +116,3 @@ class Runner(pl.LightningModule):
         print("validation epoch end!!")
         # save generated images on each epoch
         wandb.log({"images": [wandb.Image(self.fake_images[:6], caption="fake")]})
-
