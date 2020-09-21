@@ -8,6 +8,22 @@ import torch.nn.functional as F
 import wandb
 
 
+class SaveCheckpointEveryNEpoch(pl.Callback):
+    def __init__(self, file_path: str, n: int = 1, filename_prefix: str = "") -> None:
+        self.n = n
+        self.file_path = file_path
+        self.filename_prefix = filename_prefix
+
+    def on_epoch_end(self, trainer: pl.Trainer, _):
+
+        epoch = trainer.current_epoch
+        if epoch % self.n == 0:
+            print(f"save models.. epoch {epoch}")
+            filename = f"{self.filename_prefix}_epoch_{epoch}.ckpt"
+            ckpt_path = f"{self.file_path}/{filename}"
+            trainer.save_checkpoint(ckpt_path)
+
+
 class Runner(pl.LightningModule):
     def __init__(self, hparams: dict, generator, discriminator):
         super(Runner, self).__init__()
@@ -20,7 +36,8 @@ class Runner(pl.LightningModule):
 
         g_optimizer = torch.optim.Adam(self.generator.parameters(), lr=lr)
         d_optimizer = torch.optim.Adam(self.discriminator.parameters(), lr=lr)
-        return [g_optimizer, d_optimizer], []  # optimizer list 전달
+        # optimizer list and no lr_scheduler
+        return [g_optimizer, d_optimizer], []
 
     def forward(self, z: torch.Tensor) -> torch.Tensor:
         return self.generator(z)
@@ -29,7 +46,7 @@ class Runner(pl.LightningModule):
         return F.binary_cross_entropy(y_hat, y)
 
     def training_step(self, batch, batch_idx, optimizer_idx):
-        real_images, labels = batch
+        real_images, _ = batch
 
         # optimizer index에 따른 구현
         # generator
@@ -45,10 +62,7 @@ class Runner(pl.LightningModule):
 
             g_loss = self.adversarial_loss(self.discriminator(self.fake_images), valid)
             tqdm_dict = {"g_loss": g_loss}
-            output = OrderedDict(
-                {"loss": g_loss, "progress_bar": tqdm_dict, "log": tqdm_dict}
-            )
-            wandb.log({"images": [wandb.Image(self.fake_images[0], caption="fake")]})
+            output = {"loss": g_loss, "progress_bar": tqdm_dict, "log": tqdm_dict}
 
             return output
 
@@ -65,7 +79,39 @@ class Runner(pl.LightningModule):
 
             d_loss = (real_loss + fake_loss) / 2
             tqdm_dict = {"d_loss": d_loss}
-            output = OrderedDict(
-                {"loss": d_loss, "progress_bar": tqdm_dict, "log": tqdm_dict}
-            )
+            output = {"loss": d_loss, "progress_bar": tqdm_dict, "log": tqdm_dict}
+
             return output
+
+    def validation_step(self, batch, batch_idx):
+        # image 를 wandb에 저장한다
+        real_images, _ = batch
+
+        z = torch.randn(
+            real_images.size(0), self.hparams.size_of_latent_vector, device=self.device,
+        )
+
+        self.fake_images = self.forward(z)
+        valid = torch.ones(real_images.size(0), 1, device=self.device)
+
+        g_loss = self.adversarial_loss(self.discriminator(self.fake_images), valid)
+        valid = torch.ones(real_images.size(0), 1, device=self.device)
+        real_loss = self.adversarial_loss(self.discriminator(real_images), valid)
+
+        fake = torch.zeros(real_images.size(0), 1, device=self.device)
+        fake_loss = self.adversarial_loss(
+            self.discriminator(self.fake_images.detach()), fake
+        )
+
+        d_loss = (real_loss + fake_loss) / 2
+        output = {
+            "d_loss": d_loss,
+            "g_loss": g_loss,
+        }
+        return output
+
+    def validation_epoch_end(self, outputs):
+        print("validation epoch end!!")
+        # save generated images on each epoch
+        wandb.log({"images": [wandb.Image(self.fake_images[:6], caption="fake")]})
+

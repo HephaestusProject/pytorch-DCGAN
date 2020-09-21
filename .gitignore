@@ -119,6 +119,4 @@ events.out.tfevents.*
 ignore/*
 .DS_Store
 dataset/
-*.pth
 wandb
-checkpoints

@@ -29,7 +29,7 @@ class SVHN:
                 self.conf.params.validation_size,
                 len(self.dataset) - self.conf.params.validation_size,
             ],
-            generator=torch.Generator().manual_seed(42),
+            generator=torch.Generator().manual_seed(2147483647),
         )
 
     def train_dataloader(self) -> Dataset:
@@ -41,7 +41,5 @@ class SVHN:
 
     def val_dataloader(self) -> Dataset:
         return DataLoader(
-            dataset=self.validation_dataset,
-            batch_size=self.model_params.batch_size,
-            shuffle=True,
+            dataset=self.validation_dataset, batch_size=self.model_params.batch_size,
         )

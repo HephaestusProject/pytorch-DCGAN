@@ -29,23 +29,23 @@ class Generator(nn.Module):
             # project and reshape
             nn.Linear(
                 self.hparams.size_of_latent_vector,
-                self.hparams.num_gen_filters * 8 * s_16 * s_16,
+                self.hparams.num_g_filters * 8 * s_16 * s_16,
                 bias=False,
             ),
-            Reshape(-1, self.hparams.num_gen_filters * 8, s_16, s_16),
-            nn.BatchNorm2d(self.hparams.num_gen_filters * 8),
+            Reshape(-1, self.hparams.num_g_filters * 8, s_16, s_16),
+            nn.BatchNorm2d(self.hparams.num_g_filters * 8),
             nn.ReLU(True),
             self._conv_transpose(
-                self.hparams.num_gen_filters * 8, self.hparams.num_gen_filters * 4,
+                self.hparams.num_g_filters * 8, self.hparams.num_g_filters * 4,
             ),  # [128, 256, 4, 4]
             self._conv_transpose(
-                self.hparams.num_gen_filters * 4, self.hparams.num_gen_filters * 2,
+                self.hparams.num_g_filters * 4, self.hparams.num_g_filters * 2,
             ),  # input[128, 128, 8, 8]
             self._conv_transpose(
-                self.hparams.num_gen_filters * 2, self.hparams.num_gen_filters * 1,
+                self.hparams.num_g_filters * 2, self.hparams.num_g_filters * 1,
             ),  # input[128, 64, 16, 16]
             nn.ConvTranspose2d(
-                self.hparams.num_gen_filters * 1, self.hparams.num_channels, 4, 2, 1,
+                self.hparams.num_g_filters * 1, self.hparams.num_channels, 4, 2, 1,
             ),
             nn.Tanh(),  # [128, 3, 32, 32]
         )
