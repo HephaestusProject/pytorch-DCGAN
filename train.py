@@ -57,12 +57,12 @@ def run(conf: DictConfig) -> None:
         gpus=-1 if torch.cuda.is_available() else 0,
         max_epochs=conf.model.params.max_epochs,
         callbacks=[
-            SaveCheckpointEveryNEpoch(n=2, file_path=checkpoint_path, filename_prefix=exp_name)
+            SaveCheckpointEveryNEpoch(
+                n=2, file_path=checkpoint_path, filename_prefix=exp_name
+            )
         ],
     )
-    trainer.fit(
-        runner, train_dataloader=train_dataloader, val_dataloaders=val_dataloader
-    )
+    trainer.fit(runner, train_dataloader=train_dataloader)
 
 
 if __name__ == "__main__":
