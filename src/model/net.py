@@ -1,11 +1,11 @@
 import math
+from collections import OrderedDict
 
 import numpy as np
 import torch
 import torch.nn as nn
 
 from src.model.ops import *
-from collections import OrderedDict
 
 
 class Generator(nn.Module):
@@ -50,7 +50,10 @@ class Generator(nn.Module):
                             1,
                         ),
                     ),
-                    ("tahn1", nn.Tanh(),),  # [128, 3, 32, 32]
+                    (
+                        "tahn1",
+                        nn.Tanh(),
+                    ),  # [128, 3, 32, 32]
                 ]
             )
         )
@@ -127,7 +130,10 @@ class Discriminator(nn.Module):
                             self.hparams.num_d_filters * 8,
                         ),
                     ),
-                    ("linear", self.linear_block(),),
+                    (
+                        "linear",
+                        self.linear_block(),
+                    ),
                 ]
             )
         )

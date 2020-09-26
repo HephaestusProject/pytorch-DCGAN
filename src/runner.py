@@ -44,7 +44,9 @@ class DCGAN(pl.LightningModule):
         super(DCGAN, self).__init__()
         self.hparams = hparams
         self.global_z_for_validation = torch.randn(
-            16, self.hparams.size_of_latent_vector, device=self.device,
+            16,
+            self.hparams.size_of_latent_vector,
+            device=self.device,
         )
 
         def _weights_init(m):
@@ -109,4 +111,3 @@ class DCGAN(pl.LightningModule):
             output = {"loss": d_loss, "progress_bar": tqdm_dict, "log": tqdm_dict}
 
             return output
-
