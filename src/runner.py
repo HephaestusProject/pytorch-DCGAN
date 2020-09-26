@@ -46,7 +46,9 @@ class Runner(pl.LightningModule):
         self.generator = generator
         self.discriminator = discriminator
         self.global_z_for_validation = torch.randn(
-            16, self.hparams.size_of_latent_vector, device=self.device,
+            16,
+            self.hparams.size_of_latent_vector,
+            device=self.device,
         )
 
     def configure_optimizers(self) -> (List, List):
@@ -100,4 +102,3 @@ class Runner(pl.LightningModule):
             output = {"loss": d_loss, "progress_bar": tqdm_dict, "log": tqdm_dict}
 
             return output
-

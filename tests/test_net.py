@@ -1,6 +1,7 @@
 import pytest
 import torch
 from omegaconf import OmegaConf
+
 from src.model.net import Discriminator, Generator
 
 
