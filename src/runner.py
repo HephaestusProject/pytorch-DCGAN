@@ -14,14 +14,29 @@ class SaveCheckpointEveryNEpoch(pl.Callback):
         self.file_path = file_path
         self.filename_prefix = filename_prefix
 
-    def on_epoch_end(self, trainer: pl.Trainer, _):
+    def on_epoch_end(self, trainer: pl.Trainer, pl_module: pl.LightningModule) -> None:
 
         epoch = trainer.current_epoch
         if epoch % self.n == 0:
-            print(f"save models.. epoch {epoch}")
+
+            # save images
+            fake_images = pl_module.forward(pl_module.global_z_for_validation)
+            trainer.logger.experiment.log(
+                {
+                    "images": [wandb.Image(pl_module.fake_images, caption="fake")],
+                    "epoch": epoch,
+                }
+            )
+            # save models
             filename = f"{self.filename_prefix}_epoch_{epoch}.ckpt"
             ckpt_path = f"{self.file_path}/{filename}"
-            trainer.save_checkpoint(ckpt_path)
+            torch.save(
+                {
+                    "generator": pl_module.generator.state_dict(),
+                    "discriminator": pl_module.discriminator.state_dict(),
+                },
+                ckpt_path,
+            )
 
 
 class Runner(pl.LightningModule):
@@ -30,6 +45,9 @@ class Runner(pl.LightningModule):
         self.hparams = hparams
         self.generator = generator
         self.discriminator = discriminator
+        self.global_z_for_validation = torch.randn(
+            16, self.hparams.size_of_latent_vector, device=self.device,
+        )
 
     def configure_optimizers(self) -> (List, List):
         lr = self.hparams.lr
@@ -83,35 +101,24 @@ class Runner(pl.LightningModule):
 
             return output
 
-    def validation_step(self, batch, batch_idx):
-        # image 를 wandb에 저장한다
-        real_images, _ = batch
 
-        z = torch.randn(
-            real_images.size(0), self.hparams.size_of_latent_vector, device=self.device,
-        )
-
-        self.fake_images = self.forward(z)
-        valid = torch.ones(real_images.size(0), 1, device=self.device)
-
-        g_loss = self.adversarial_loss(self.discriminator(self.fake_images), valid)
-        valid = torch.ones(real_images.size(0), 1, device=self.device)
-        real_loss = self.adversarial_loss(self.discriminator(real_images), valid)
-
-        fake = torch.zeros(real_images.size(0), 1, device=self.device)
-        fake_loss = self.adversarial_loss(
-            self.discriminator(self.fake_images.detach()), fake
-        )
-
-        d_loss = (real_loss + fake_loss) / 2
-        output = {
-            "d_loss": d_loss,
-            "g_loss": g_loss,
-        }
-        return output
+"""
 
     def validation_epoch_end(self, outputs):
         print("validation epoch end!!")
         # save generated images on each epoch
-        wandb.log({"images": [wandb.Image(self.fake_images[:6], caption="fake")]})
+        wandb.log({"images": [wandb.Image(self.fake_images[:32], caption="fake")]})
+
+
+    def training_step_end(self, train_outputs):
+        torch.save(
+            {
+                "generator": self.generator.state_dict(),
+                "discriminator": self.discriminator.state_dict(),
+            },
+            "test.pt",
+        )
+        return train_outputs
+
+"""
 
