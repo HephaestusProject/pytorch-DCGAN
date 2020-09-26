@@ -45,7 +45,9 @@ def run(conf: DictConfig) -> None:
     print(conf.model.params)
     exp_name = get_exp_name(conf.model.params)
     wandb_logger = WandbLogger(
-        name=exp_name, project="hephaestusproject-pytorch-dcgan", log_model=True,
+        name=exp_name,
+        project="hephaestusproject-pytorch-dcgan",
+        log_model=True,
     )
     train_dataloader, val_dataloader = get_dataloader(conf)
     model_G = Generator(hparams=conf.model.params)
