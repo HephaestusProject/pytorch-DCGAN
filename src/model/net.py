@@ -75,7 +75,12 @@ class Generator(nn.Module):
     ) -> nn.Sequential:
         model = nn.Sequential(
             nn.ConvTranspose2d(
-                c_in, c_out, kernel_size, stride, 1, bias=False,
+                c_in,
+                c_out,
+                kernel_size,
+                stride,
+                1,
+                bias=False,
             ),  # bias false
             nn.BatchNorm2d(c_out),
             nn.ReLU(True),
@@ -132,7 +137,11 @@ class Discriminator(nn.Module):
         # project and reshape
         model = nn.Sequential(
             Reshape(-1, self.hparams.num_d_filters * 8 * 2 * 2),
-            nn.Linear(self.hparams.num_d_filters * 8 * 2 * 2, 1, bias=False,),
+            nn.Linear(
+                self.hparams.num_d_filters * 8 * 2 * 2,
+                1,
+                bias=False,
+            ),
             nn.Sigmoid(),
         )
         return model

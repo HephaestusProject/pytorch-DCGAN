@@ -41,5 +41,6 @@ class SVHN:
 
     def val_dataloader(self) -> Dataset:
         return DataLoader(
-            dataset=self.validation_dataset, batch_size=self.model_params.batch_size,
+            dataset=self.validation_dataset,
+            batch_size=self.model_params.batch_size,
         )
