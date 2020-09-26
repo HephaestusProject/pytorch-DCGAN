@@ -101,38 +101,3 @@ class Runner(pl.LightningModule):
 
             return output
 
-
-"""
-
-    def validation_epoch_end(self, outputs):
-        print("validation epoch end!!")
-        # save generated images on each epoch
-        wandb.log({"images": [wandb.Image(self.fake_images[:32], caption="fake")]})
-
-
-    def training_step_end(self, train_outputs):
-        torch.save(
-            {
-                "generator": self.generator.state_dict(),
-                "discriminator": self.discriminator.state_dict(),
-            },
-            "test.pt",
-        )
-        return train_outputs
-
-<<<<<<< HEAD
-"""
-
-=======
-        d_loss = (real_loss + fake_loss) / 2
-        output = {
-            "d_loss": d_loss,
-            "g_loss": g_loss,
-        }
-        return output
-
-    def validation_epoch_end(self, outputs):
-        print("validation epoch end!!")
-        # save generated images on each epoch
-        wandb.log({"images": [wandb.Image(self.fake_images[:6], caption="fake")]})
->>>>>>> 3108bc5203be2459067f7216b667c819c306fb42
