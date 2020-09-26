@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 
 from src.dataset import SVHN
 from src.model.net import Discriminator, Generator
-from src.runner import Runner, SaveCheckpointEveryNEpoch
+from src.runner import DCGAN, SaveCheckpointEveryNEpoch
 
 
 def get_config(args: Namespace) -> DictConfig:
@@ -45,14 +45,12 @@ def run(conf: DictConfig) -> None:
     print(conf.model.params)
     exp_name = get_exp_name(conf.model.params)
     wandb_logger = WandbLogger(
-        name=exp_name,
-        project="hephaestusproject-pytorch-dcgan",
-        log_model=True,
+        name=exp_name, project="hephaestusproject-pytorch-dcgan", log_model=True,
     )
     train_dataloader, val_dataloader = get_dataloader(conf)
     model_G = Generator(hparams=conf.model.params)
     model_D = Discriminator(hparams=conf.model.params)
-    runner = Runner(conf.model.params, model_G, model_D)
+    runner = DCGAN(conf.model.params, model_G, model_D)
     checkpoint_path = Path("checkpoints")
     trainer = pl.Trainer(
         logger=wandb_logger,
