@@ -1,12 +1,9 @@
 import pytest
-import pytorch_lightning
 import torch
+from src.model.ops import Reshape
 
-from src.model.ops import add, multiply, subtract
 
-
-@pytest.fixture(scope="module")
-def fix_seed():
-    pytorch_lightning.seed_everything(777)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
+def test_reshape():
+    x = torch.empty(128, 100)
+    y = Reshape(-1, 1).forward(x)
+    assert y.size() == torch.Size([12800, 1])
