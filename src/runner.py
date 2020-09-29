@@ -14,7 +14,7 @@ class SaveCheckpointEveryNEpoch(pl.Callback):
         self.file_path = file_path
         self.filename_prefix = filename_prefix
 
-    def on_epoch_end(self, trainer: pl.Trainer, pl_module: pl.LightningModule) -> None:
+    def on_batch_end(self, trainer: pl.Trainer, pl_module: pl.LightningModule) -> None:
 
         epoch = trainer.current_epoch
         if epoch % self.n == 0:
