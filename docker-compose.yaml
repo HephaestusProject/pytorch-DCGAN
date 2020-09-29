@@ -1,0 +1,14 @@
+version: "3.5"
+services:
+  dcgan_svc:
+    container_name: dcgan-container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
+    image: dcgan:0.0.1
+    ports:
+      - "40008:10000"
+    volumes:
+      - .:/workspace

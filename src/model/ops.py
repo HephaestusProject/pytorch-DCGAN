@@ -1,16 +1,11 @@
-"""
-    This script was made by Nick at 19/07/20.
-    To implement code of your operation to be being used your network.
-"""
+import torch
+import torch.nn as nn
 
 
-def multiply(a, b):
-    return a * b
+class Reshape(nn.Module):
+    def __init__(self, *args) -> None:
+        super(Reshape, self).__init__()
+        self.shape = args
 
-
-def add(a, b):
-    return a + b
-
-
-def subtract(a, b):
-    return a - b
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return x.view(self.shape)

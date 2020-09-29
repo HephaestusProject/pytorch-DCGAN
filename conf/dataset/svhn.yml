@@ -1,0 +1,6 @@
+name: svhn
+path:
+  train: dataset/svhn/train
+  test: dataset/svhn/test
+params:
+  validation_size: 10000
