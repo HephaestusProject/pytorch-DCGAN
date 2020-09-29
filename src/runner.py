@@ -14,7 +14,7 @@ class SaveCheckpointEveryNEpoch(pl.Callback):
         self.file_path = file_path
         self.filename_prefix = filename_prefix
 
-    def on_epoch_end(self, trainer: pl.Trainer, pl_module: pl.LightningModule) -> None:
+    def on_batch_end(self, trainer: pl.Trainer, pl_module: pl.LightningModule) -> None:
 
         epoch = trainer.current_epoch
         if epoch % self.n == 0:
@@ -44,9 +44,7 @@ class DCGAN(pl.LightningModule):
         super(DCGAN, self).__init__()
         self.hparams = hparams
         self.global_z_for_validation = torch.randn(
-            16,
-            self.hparams.size_of_latent_vector,
-            device=self.device,
+            16, self.hparams.size_of_latent_vector, device=self.device,
         )
 
         def _weights_init(m):
