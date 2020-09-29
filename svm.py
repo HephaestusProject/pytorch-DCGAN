@@ -1,25 +1,23 @@
 import dataclasses
-from argparse import ArgumentParser, Namespace
-from pathlib import Path
-
-import pytorch_lightning as pl
-import torch
-from omegaconf import DictConfig, OmegaConf
-from pytorch_lightning.loggers import WandbLogger
-from torch.utils.data import DataLoader
-
-from src.dataset import SVHN
-from src.model.net import Discriminator, Generator
-
-import torch
-import sklearn
-from sklearn.svm import LinearSVC
-import pickle
 
 # memory profiling
 import linecache
 import os
+import pickle
 import tracemalloc
+from argparse import ArgumentParser, Namespace
+from pathlib import Path
+
+import pytorch_lightning as pl
+import sklearn
+import torch
+from omegaconf import DictConfig, OmegaConf
+from pytorch_lightning.loggers import WandbLogger
+from sklearn.svm import LinearSVC
+from torch.utils.data import DataLoader
+
+from src.dataset import SVHN
+from src.model.net import Discriminator, Generator
 
 
 def get_config(args: Namespace) -> DictConfig:

@@ -1,10 +1,10 @@
 from typing import List
 
+import numpy as np
 import torch
 import torchvision
 import torchvision.transforms as transforms
-from torch.utils.data import DataLoader, Dataset, random_split, Sampler
-import numpy as np
+from torch.utils.data import DataLoader, Dataset, Sampler, random_split
 
 np.random.seed(777)
 
@@ -32,7 +32,10 @@ class SVHN:
         # split by fixed validation size
         return random_split(
             self.dataset,
-            [self.validation_size, len(self.dataset) - self.validation_size,],
+            [
+                self.validation_size,
+                len(self.dataset) - self.validation_size,
+            ],
             generator=torch.Generator().manual_seed(2147483647),
         )
 
@@ -45,7 +48,10 @@ class SVHN:
         )
 
     def val_dataloader(self) -> Dataset:
-        return DataLoader(dataset=self.validation_dataset, batch_size=self.batch_size,)
+        return DataLoader(
+            dataset=self.validation_dataset,
+            batch_size=self.batch_size,
+        )
 
     def get_uniform_dataset_from_each_class(
         self, n: int = 1000, mode: str = "train"
@@ -69,7 +75,8 @@ class SVHN:
 
     def get_test_dataset(self) -> Dataset:
         test_dataset = torchvision.datasets.SVHN(
-            self.test_path, split="test", download=True,
+            self.test_path,
+            split="test",
+            download=True,
         )
         return test_dataset
-
