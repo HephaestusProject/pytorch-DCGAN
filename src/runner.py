@@ -19,7 +19,6 @@ class SaveCheckpointEveryNEpoch(pl.Callback):
         epoch = trainer.current_epoch
         if epoch % self.n == 0:
 
-            # save images
             fake_images = pl_module.forward(pl_module.global_z_for_validation)
             trainer.logger.experiment.log(
                 {
@@ -27,6 +26,7 @@ class SaveCheckpointEveryNEpoch(pl.Callback):
                     "epoch": epoch,
                 }
             )
+
             # save models
             filename = f"{self.filename_prefix}_epoch_{epoch}.ckpt"
             ckpt_path = f"{self.file_path}/{filename}"
@@ -46,7 +46,7 @@ class DCGAN(pl.LightningModule):
         self.global_z_for_validation = torch.randn(
             16,
             self.hparams.size_of_latent_vector,
-            device=self.device,
+            device= 'cuda:0' if torch.cuda.is_available() else 'cpu',
         )
 
         def _weights_init(m):
@@ -85,7 +85,6 @@ class DCGAN(pl.LightningModule):
                 self.hparams.size_of_latent_vector,
                 device=self.device,
             )
-
             self.fake_images = self.forward(z)
             valid = torch.ones(real_images.size(0), 1, device=self.device)
 

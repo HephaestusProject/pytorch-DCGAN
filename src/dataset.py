@@ -18,8 +18,9 @@ class SVHN:
             self.conf.path.train,
             split="train",
             download=True,
-            transform=transforms.ToTensor(),
-        )
+            transform=transforms.Compose([
+                transforms.CenterCrop(32),                                                                           transforms.ToTensor(),
+                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),                                             ]))
 
     def split_dataset(self) -> [Dataset, Dataset]:
         # split by fixed validation size
@@ -37,6 +38,7 @@ class SVHN:
             dataset=self.train_dataset,
             batch_size=self.model_params.batch_size,
             shuffle=True,
+            num_workers=4,
         )
 
     def val_dataloader(self) -> Dataset:
