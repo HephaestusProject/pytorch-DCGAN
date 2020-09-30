@@ -81,13 +81,13 @@ def run(conf: DictConfig) -> None:
         return features
 
     svhn = SVHN(conf)
-    X, y = svhn.get_uniform_dataset_from_each_class(n=500,mode="train")
+    X, y = svhn.get_uniform_dataset_from_each_class(n=500, mode="train")
     features = get_features(X)
 
     test_X, test_y = svhn.get_uniform_dataset_from_each_class(n=100, mode="test")
     test_features = get_features(test_X)
-    #val_X, val_y = svhn.validation_dataset.data, svhn.validation_dataset.labels
-    #val_features = get_features(val_X)
+    # val_X, val_y = svhn.validation_dataset.data, svhn.validation_dataset.labels
+    # val_features = get_features(val_X)
     # svm code
     cs = [0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01]
     for c in cs:
@@ -100,10 +100,10 @@ def run(conf: DictConfig) -> None:
         pickle.dump(clf, open(filename, "wb"))
 
         tr_pred = clf.predict(test_features)
-        #va_pred = clf.predict(val_features)
+        # va_pred = clf.predict(val_features)
 
         tr_acc = sklearn.metrics.accuracy_score(test_y, tr_pred)
-        #va_acc = sklearn.metrics.accuracy_score(val_y, va_pred)
+        # va_acc = sklearn.metrics.accuracy_score(val_y, va_pred)
         print(c, tr_acc)
 
         # load the model from disk

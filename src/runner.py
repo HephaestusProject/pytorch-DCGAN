@@ -46,7 +46,7 @@ class DCGAN(pl.LightningModule):
         self.global_z_for_validation = torch.randn(
             16,
             self.hparams.size_of_latent_vector,
-            device= 'cuda:0' if torch.cuda.is_available() else 'cpu',
+            device="cuda:0" if torch.cuda.is_available() else "cpu",
         )
 
         def _weights_init(m):

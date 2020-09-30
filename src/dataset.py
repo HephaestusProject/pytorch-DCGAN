@@ -25,9 +25,14 @@ class SVHN:
             self.train_path,
             split="train",
             download=True,
-            transform=transforms.Compose([
-                transforms.CenterCrop(32),                                                                           transforms.ToTensor(),
-                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),                                             ]))
+            transform=transforms.Compose(
+                [
+                    transforms.CenterCrop(32),
+                    transforms.ToTensor(),
+                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                ]
+            ),
+        )
 
     def split_dataset(self) -> [Dataset, Dataset]:
         # split by fixed validation size
