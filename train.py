@@ -43,7 +43,7 @@ def get_exp_name(params: dict) -> str:
 
 def run(conf: DictConfig) -> None:
     print(conf.model.params)
-    exp_name = get_exp_name(conf.model.params)
+    exp_name = "center-crop-norm_"+ get_exp_name(conf.model.params)
     wandb_logger = WandbLogger(
         name=exp_name,
         project="hephaestusproject-pytorch-dcgan",

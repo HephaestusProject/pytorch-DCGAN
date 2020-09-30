@@ -62,7 +62,7 @@ class SVHN:
         NUM_OF_CLASSES = 10
         dataset = None
         if mode == "train":
-            dataset = self.train_dataset
+            dataset = self.dataset
         else:
             dataset = self.get_test_dataset()
         subsets = []
