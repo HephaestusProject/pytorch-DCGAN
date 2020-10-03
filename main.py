@@ -1,21 +1,12 @@
 import dataclasses
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
-
-import pytorch_lightning as pl
 import torch
 from omegaconf import DictConfig, OmegaConf
-from pytorch_lightning.loggers import WandbLogger
-from torch.utils.data import DataLoader
-
-from src.dataset import SVHN
-from src.model.net import Discriminator, Generator
-from src.runner import DCGAN, SaveCheckpointEveryNEpoch
-
 import functools
 
 # models
-import experiment_dcgan
+import dcgan, svm
 
 
 def get_config(args: Namespace, conf_dir: str) -> DictConfig:
@@ -55,8 +46,6 @@ def get_config(args: Namespace, conf_dir: str) -> DictConfig:
         )
 
 
-
-
 def get_exp_name(params: dict) -> str:
     param_str_list = [f"{k}_{v}" for k, v in params.items()]
     name = functools.reduce(lambda first, second: first + "-" + second, param_str_list)
@@ -69,7 +58,7 @@ def run(args: Namespace) -> None:
     mode = args.mode
     if mode == "train":
         if conf.model.name == "dcgan":
-            experiment_dcgan.train(conf)
+            dcgan.train(conf)
 
     # elif mode == "test":
 
