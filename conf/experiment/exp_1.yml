@@ -1,10 +1,12 @@
-name: dcgan
+name: exp_1
+dataset: svhn
+model: dcgan
 hparams:
-  batch_size: 128
   num_channels: 3
+  batch_size: 128
   size_of_latent_vector: 100
   num_g_filters: 64
   num_d_filters: 64
   lr: 0.0005
   beta1: 0.5
-  max_epochs: 3000
+  max_epochs: 200

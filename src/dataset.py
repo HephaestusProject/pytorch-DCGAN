@@ -10,13 +10,15 @@ np.random.seed(777)
 
 
 class SVHN:
-    def __init__(self, conf: dict) -> None:
-        self.conf = conf.dataset
-        self.model_params = conf.model.params
-        self.train_path = self.conf.path.train
-        self.test_path = "dataset/svhn/test"
-        self.validation_size = self.conf.params.validation_size
-        self.batch_size = self.model_params.batch_size
+    def __init__(
+        self, train_path: str, test_path: str, validation_size: str, batch_size: str
+    ) -> None:
+        # self.conf = conf.dataset
+        # self.model_params = conf.model.params
+        self.train_path = train_path
+        self.test_path = test_path
+        self.validation_size = validation_size
+        self.batch_size = batch_size
         self.dataset = self.load_dataset()
         self.validation_dataset, self.train_dataset = self.split_dataset()
 
@@ -38,27 +40,20 @@ class SVHN:
         # split by fixed validation size
         return random_split(
             self.dataset,
-            [
-                self.validation_size,
-                len(self.dataset) - self.validation_size,
-            ],
+            [self.validation_size, len(self.dataset) - self.validation_size,],
             generator=torch.Generator().manual_seed(2147483647),
         )
 
-    def train_dataloader(self, sampler: Sampler = None) -> Dataset:
+    def train_dataloader(self) -> Dataset:
         return DataLoader(
             dataset=self.train_dataset,
             batch_size=self.batch_size,
             shuffle=True,
             num_workers=4,
-            sampler=sampler,
         )
 
     def val_dataloader(self) -> Dataset:
-        return DataLoader(
-            dataset=self.validation_dataset,
-            batch_size=self.batch_size,
-        )
+        return DataLoader(dataset=self.validation_dataset, batch_size=self.batch_size,)
 
     def get_uniform_dataset_from_each_class(
         self, n: int = 1000, mode: str = "train"
@@ -82,8 +77,6 @@ class SVHN:
 
     def get_test_dataset(self) -> Dataset:
         test_dataset = torchvision.datasets.SVHN(
-            self.test_path,
-            split="test",
-            download=True,
+            self.test_path, split="test", download=True,
         )
         return test_dataset

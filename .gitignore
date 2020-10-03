@@ -120,3 +120,6 @@ ignore/*
 .DS_Store
 dataset/
 wandb
+*.pt
+hephaestusproject-pytorch-dcgan/
+*.ckpt

@@ -3,4 +3,6 @@ path:
   train: dataset/svhn/train
   test: dataset/svhn/test
 params:
+  height: 32
+  width: 32
   validation_size: 10000
