@@ -1,6 +1,7 @@
-import torch
 import config
+import torch
 from fastapi import FastAPI
+
 from src.model import Generator
 
 app = FastAPI()
