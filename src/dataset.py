@@ -40,7 +40,10 @@ class SVHN:
         # split by fixed validation size
         return random_split(
             self.dataset,
-            [self.validation_size, len(self.dataset) - self.validation_size,],
+            [
+                self.validation_size,
+                len(self.dataset) - self.validation_size,
+            ],
             generator=torch.Generator().manual_seed(2147483647),
         )
 
@@ -53,7 +56,10 @@ class SVHN:
         )
 
     def val_dataloader(self) -> Dataset:
-        return DataLoader(dataset=self.validation_dataset, batch_size=self.batch_size,)
+        return DataLoader(
+            dataset=self.validation_dataset,
+            batch_size=self.batch_size,
+        )
 
     def get_uniform_dataset_from_each_class(
         self, n: int = 1000, mode: str = "train"
@@ -77,6 +83,8 @@ class SVHN:
 
     def get_test_dataset(self) -> Dataset:
         test_dataset = torchvision.datasets.SVHN(
-            self.test_path, split="test", download=True,
+            self.test_path,
+            split="test",
+            download=True,
         )
         return test_dataset
