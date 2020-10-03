@@ -2,12 +2,13 @@ import dataclasses
 import functools
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
+
 import torch
 from omegaconf import DictConfig, OmegaConf
-import functools
 
 # models
-import dcgan, svm
+import dcgan
+import svm
 
 
 def get_config(args: Namespace, conf_dir: str) -> DictConfig:
