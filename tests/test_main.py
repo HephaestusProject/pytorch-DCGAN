@@ -1,8 +1,9 @@
-import pytest
 from argparse import ArgumentParser, Namespace
+from pathlib import Path
+
+import pytest
 from omegaconf import OmegaConf
 from omegaconf.dictconfig import DictConfig
-from pathlib import Path
 
 import main
 

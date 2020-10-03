@@ -1,4 +1,5 @@
 import dataclasses
+import functools
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
@@ -11,8 +12,6 @@ from torch.utils.data import DataLoader
 from src.dataset import SVHN
 from src.model.net import Discriminator, Generator
 from src.runner import DCGAN, SaveCheckpointEveryNEpoch
-
-import functools
 
 
 def get_dataloader(conf: str) -> (DataLoader, DataLoader):
@@ -32,7 +31,9 @@ def train(conf: DictConfig) -> None:
     exp_name = conf.experiment.name
     checkpoint_path = Path("checkpoints")
     wandb_logger = WandbLogger(
-        name=exp_name, project="hephaestusproject-pytorch-dcgan", log_model=True,
+        name=exp_name,
+        project="hephaestusproject-pytorch-dcgan",
+        log_model=True,
     )
     train_dataloader, val_dataloader = get_dataloader(conf)
     model_G = Generator(hparams=conf.hparams)

@@ -1,4 +1,5 @@
 import dataclasses
+import functools
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 import torch
