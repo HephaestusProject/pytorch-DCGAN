@@ -60,6 +60,10 @@ def run(args: Namespace) -> None:
     if mode == "train":
         if conf.model.name == "dcgan":
             dcgan.train(conf)
+        elif conf.model.name == "svm":
+            svm.train(conf)
+        else:
+            raise Exception(f"No such model: {conf.model.name}")
 
     # elif mode == "test":
 

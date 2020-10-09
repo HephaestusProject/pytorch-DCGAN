@@ -22,7 +22,7 @@ class SaveCheckpointEveryNEpoch(pl.Callback):
             fake_images = pl_module.forward(pl_module.global_z_for_validation)
             trainer.logger.experiment.log(
                 {
-                    "images": [wandb.Image(pl_module.fake_images, caption="fake")],
+                    "images": [wandb.Image(pl_module.fake_images[:32], caption="fake")],
                     "epoch": epoch,
                 }
             )
@@ -62,9 +62,15 @@ class DCGAN(pl.LightningModule):
 
     def configure_optimizers(self) -> (List, List):
         lr = self.hparams.lr
+        b1 = self.hparams.beta1
+        l2 = self.hparams.l2
 
-        g_optimizer = torch.optim.Adam(self.generator.parameters(), lr=lr)
-        d_optimizer = torch.optim.Adam(self.discriminator.parameters(), lr=lr)
+        g_optimizer = torch.optim.Adam(
+            self.generator.parameters(), lr=lr, betas=(b1, 0.999), weight_decay=l2
+        )
+        d_optimizer = torch.optim.Adam(
+            self.discriminator.parameters(), lr=lr, betas=(b1, 0.999), weight_decay=l2
+        )
         # optimizer list and no lr_scheduler
         return [g_optimizer, d_optimizer], []
 
@@ -87,7 +93,7 @@ class DCGAN(pl.LightningModule):
             )
             self.fake_images = self.forward(z)
             valid = torch.ones(real_images.size(0), 1, device=self.device)
-
+            dis = self.discriminator(self.fake_images)
             g_loss = self.adversarial_loss(self.discriminator(self.fake_images), valid)
             tqdm_dict = {"g_loss": g_loss}
             output = {"loss": g_loss, "progress_bar": tqdm_dict, "log": tqdm_dict}

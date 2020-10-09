@@ -119,7 +119,7 @@ events.out.tfevents.*
 ignore/*
 .DS_Store
 dataset/
+checkpoints/
 wandb
 *.pt
 hephaestusproject-pytorch-dcgan/
-*.ckpt
