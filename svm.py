@@ -57,7 +57,10 @@ def train(conf: DictConfig) -> None:
 
     # file_name = "batch_size_128-output_height_32-output_width_32-num_channels_3-size_of_latent_vector_100-num_g_filters_64-num_d_filters_64-lr_0.0005-beta1_0.5-max_epochs_1000_epoch_998"
     file_name = "batch_size_128-output_height_32-output_width_32-num_channels_3-size_of_latent_vector_100-num_g_filters_64-num_d_filters_64-lr_0.0002-beta1_0.5-max_epochs_500_epoch_242"
-    checkpoints = torch.load(f"{file_name}.ckpt", map_location=torch.device("cpu"),)
+    checkpoints = torch.load(
+        f"{file_name}.ckpt",
+        map_location=torch.device("cpu"),
+    )
     discriminator = model_D.load_state_dict(checkpoints["discriminator"])
     model_D.eval()
 

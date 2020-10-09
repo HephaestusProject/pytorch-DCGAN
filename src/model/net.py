@@ -50,7 +50,10 @@ class Generator(nn.Module):
                             1,
                         ),
                     ),
-                    ("tahn1", nn.Tanh(),),  # [128, 3, 32, 32]
+                    (
+                        "tahn1",
+                        nn.Tanh(),
+                    ),  # [128, 3, 32, 32]
                 ]
             )
         )
@@ -112,7 +115,10 @@ class Discriminator(nn.Module):
                             2,
                         ),
                     ),
-                    ("lrelu1", nn.LeakyReLU(0.2, inplace=True),),
+                    (
+                        "lrelu1",
+                        nn.LeakyReLU(0.2, inplace=True),
+                    ),
                     (
                         "conv_block_2",
                         self.conv_block(
@@ -143,7 +149,11 @@ class Discriminator(nn.Module):
         # project and reshape
         model = nn.Sequential(
             Reshape(-1, self.hparams.num_d_filters * 8 * 2 * 2),
-            nn.Linear(self.hparams.num_d_filters * 8 * 2 * 2, 1, bias=False,),
+            nn.Linear(
+                self.hparams.num_d_filters * 8 * 2 * 2,
+                1,
+                bias=False,
+            ),
             nn.Sigmoid(),
         )
         return model
