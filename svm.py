@@ -48,44 +48,56 @@ def get_exp_name(params: dict) -> str:
     return name
 
 
-def run(conf: DictConfig) -> None:
+def train(conf: DictConfig) -> None:
 
     # model load and concat
-    exp_name = get_exp_name(conf.model.params)
-    model_D = Discriminator(hparams=conf.model.params)
-    checkpoints = torch.load(
-        "checkpoints/batch_size_128-output_height_32-output_width_32-num_channels_3-size_of_latent_vector_100-num_g_filters_64-num_d_filters_64-lr_0.0005-beta1_0.5-max_epochs_1000_epoch_998.ckpt",
-        map_location=torch.device("cpu"),
-    )
+    exp_name = conf.experiment.name
+    print(conf)
+    model_D = Discriminator(hparams=conf.hparams)
+
+    # file_name = "batch_size_128-output_height_32-output_width_32-num_channels_3-size_of_latent_vector_100-num_g_filters_64-num_d_filters_64-lr_0.0005-beta1_0.5-max_epochs_1000_epoch_998"
+    file_name = "batch_size_128-output_height_32-output_width_32-num_channels_3-size_of_latent_vector_100-num_g_filters_64-num_d_filters_64-lr_0.0002-beta1_0.5-max_epochs_500_epoch_242"
+    checkpoints = torch.load(f"{file_name}.ckpt", map_location=torch.device("cpu"),)
     discriminator = model_D.load_state_dict(checkpoints["discriminator"])
     model_D.eval()
 
     def get_features(X):
         images = torch.from_numpy(X).type(torch.FloatTensor)
         images = images.view(-1, 3, 32, 32)
+        m1 = torch.nn.MaxPool2d(4, stride=4)
+        m2 = torch.nn.MaxPool2d(2, stride=2)
+        m3 = torch.nn.MaxPool2d(1, stride=1)
         result1 = model_D.layers.conv1.forward(images)
         result2 = model_D.layers.conv2.forward(result1)
         result3 = model_D.layers.conv3.forward(result2)
+        m_result1 = m1(result1)
+
+        m_result2 = m2(result2)
+        m_result3 = m3(result3)
         features = (
             torch.cat(
                 [
-                    result1.view(-1, 64 * 16 * 16),
-                    result2.view(-1, 128 * 8 * 8),
-                    result3.view(-1, 256 * 4 * 4),
+                    m_result1.view(-1, 64 * 4 * 4),
+                    m_result2.view(-1, 128 * 4 * 4),
+                    m_result3.view(-1, 256 * 4 * 4),
                 ],
                 axis=1,
             )
             .detach()
             .numpy()
         )
+        print(features.shape)
         return features
 
-    svhn = SVHN(conf)
-    X, y = svhn.get_uniform_dataset_from_each_class(n=500, mode="train")
+    svhn = SVHN(
+        train_path=conf.dataset.path.train,
+        test_path=conf.dataset.path.test,
+        validation_size=conf.dataset.params.validation_size,
+        batch_size=conf.hparams.batch_size,
+    )
+    X, y = svhn.get_uniform_dataset_from_each_class(n=100, mode="train")
     features = get_features(X)
 
-    test_X, test_y = svhn.get_uniform_dataset_from_each_class(n=100, mode="test")
-    test_features = get_features(test_X)
     # val_X, val_y = svhn.validation_dataset.data, svhn.validation_dataset.labels
     # val_features = get_features(val_X)
     # svm code
@@ -99,12 +111,17 @@ def run(conf: DictConfig) -> None:
         filename = f"finalized_model_{c}.sav"
         pickle.dump(clf, open(filename, "wb"))
 
-        tr_pred = clf.predict(test_features)
-        # va_pred = clf.predict(val_features)
+        for i in range(10):
+            test_X, test_y = svhn.get_uniform_dataset_from_each_class(
+                n=100, mode="test"
+            )
+            test_features = get_features(test_X)
+            tr_pred = clf.predict(test_features)
+            # va_pred = clf.predict(val_features)
 
-        tr_acc = sklearn.metrics.accuracy_score(test_y, tr_pred)
-        # va_acc = sklearn.metrics.accuracy_score(val_y, va_pred)
-        print(c, tr_acc)
+            tr_acc = sklearn.metrics.accuracy_score(test_y, tr_pred)
+            # va_acc = sklearn.metrics.accuracy_score(val_y, va_pred)
+            print(c, i, tr_acc)
 
         # load the model from disk
         # loaded_model = pickle.load(open(filename, 'rb'))
@@ -114,11 +131,3 @@ def run(conf: DictConfig) -> None:
         # print(result)
 
     # svm
-
-
-if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument("--dataset", default="svhn", type=str)
-    parser.add_argument("--model", default="dcgan", type=str)
-    args = parser.parse_args()
-    run(get_config(args))
