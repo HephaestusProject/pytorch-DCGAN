@@ -27,23 +27,14 @@ class SVHN:
             self.train_path,
             split="train",
             download=True,
-            transform=transforms.Compose(
-                [
-                    transforms.CenterCrop(32),
-                    transforms.ToTensor(),
-                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-                ]
-            ),
+            transform=transforms.ToTensor(),
         )
 
     def split_dataset(self) -> [Dataset, Dataset]:
         # split by fixed validation size
         return random_split(
             self.dataset,
-            [
-                self.validation_size,
-                len(self.dataset) - self.validation_size,
-            ],
+            [self.validation_size, len(self.dataset) - self.validation_size,],
             generator=torch.Generator().manual_seed(2147483647),
         )
 
@@ -56,10 +47,7 @@ class SVHN:
         )
 
     def val_dataloader(self) -> Dataset:
-        return DataLoader(
-            dataset=self.validation_dataset,
-            batch_size=self.batch_size,
-        )
+        return DataLoader(dataset=self.validation_dataset, batch_size=self.batch_size,)
 
     def get_uniform_dataset_from_each_class(
         self, n: int = 1000, mode: str = "train"
@@ -86,5 +74,6 @@ class SVHN:
             self.test_path,
             split="test",
             download=True,
+            transform=transforms.ToTensor(),
         )
         return test_dataset

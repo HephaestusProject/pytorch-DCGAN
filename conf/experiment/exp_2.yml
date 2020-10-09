@@ -1,4 +1,4 @@
-name: exp_1
+name: exp_2_kernel_5_add_l2_lr_0002
 dataset: svhn
 model: dcgan
 hparams:
@@ -7,6 +7,7 @@ hparams:
   size_of_latent_vector: 100
   num_g_filters: 64
   num_d_filters: 64
-  lr: 0.0005
+  lr: 0.0002
   beta1: 0.5
   max_epochs: 3000
+  l2: 1e-5
